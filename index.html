@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SCRS Scorpion Forecast</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f8fa;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #005f73;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      width: 100%;
+      max-width: 900px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1rem;
+      text-align: center;
+    }
+    canvas {
+      width: 100%;
+      max-height: 200px;
+    }
+    small {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>SCRS Scorpion</h1>
+  <div class="grid">
+    <div class="card" id="water-temp">Water Temp<br><strong>-- °F</strong></div>
+    <div class="card" id="wind-forecast">Wind Forecast<br><strong>-- kts</strong><br>--°</div>
+    <div class="card" id="air-temp">Air Temp<br><strong>-- °F</strong></div>
+    <div class="card" id="swell-1">Swell 1<br><strong>-- ft @ -- sec</strong></div>
+    <div class="card" id="swell-2">Swell 2<br><strong>-- ft @ -- sec</strong></div>
+    <div class="card">
+      <div>Tide - Prisoners Harbor</div>
+      <canvas id="tideChart"></canvas>
+    </div>
+  </div>
+  <small id="timestamp">Last updated: --</small>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch("data.json", { cache: "no-store" });
+        const data = await res.json();
+
+        document.getElementById("water-temp").innerHTML = `Water Temp<br><strong>${data.waterTemperatureF ?? '--'} °F</strong>`;
+        document.getElementById("wind-forecast").innerHTML = `Wind Forecast<br><strong>${data.windSpeed ?? '--'} kts</strong><br>${data.windDir ?? '--'}°`;
+        document.getElementById("air-temp").innerHTML = `Air Temp<br><strong>${data.airTemp ?? '--'} °F</strong>`;
+        document.getElementById("swell-1").innerHTML = `Swell 1<br><strong>${data.swell1?.height ?? '--'} ft @ ${data.swell1?.period ?? '--'} sec</strong>`;
+        document.getElementById("swell-2").innerHTML = `Swell 2<br><strong>${data.swell2?.height ?? '--'} ft @ ${data.swell2?.period ?? '--'} sec</strong>`;
+        document.getElementById("timestamp").innerText = "Last updated: " + new Date(data.updated).toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+
+        const ctx = document.getElementById('tideChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.tide.map(d => d.time),
+            datasets: [{
+              label: 'Tide (ft)',
+              data: data.tide.map(d => d.height),
+              fill: true,
+              borderColor: '#0077b6',
+              backgroundColor: 'rgba(0,119,182,0.1)'
+            }]
+          },
+          options: {
+            scales: {
+              x: { ticks: { maxRotation: 45, minRotation: 45 } },
+              y: { beginAtZero: false }
+            }
+          }
+        });
+      } catch (e) {
+        console.error("Failed to load data.json", e);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
