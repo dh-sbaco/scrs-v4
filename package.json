@@ -1,5 +1,5 @@
 {
-  "name": "scrs-scorpion",
+  "name": "scrs-v4",
   "type": "module",
   "dependencies": {
     "node-fetch": "^2.6.7"
