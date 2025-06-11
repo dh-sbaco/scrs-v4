@@ -1,6 +1,26 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 
+async function fetchAndUpdate() {
+  try {
+    const res = await fetch('data.json'); // adjust path if needed
+    const data = await res.json();
+
+    // Example: update water temp element
+    document.getElementById('waterTemp').textContent = data.waterTemperatureF + ' °F';
+
+    // Update other elements similarly...
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+}
+
+document.getElementById('refreshBtn').addEventListener('click', fetchAndUpdate);
+
+// Optionally, call it on page load too
+window.addEventListener('load', fetchAndUpdate);
+
+
 const buoyId = '46053';
 const pointForecast = { lat: 34.060205, lon: -119.531650 };
 const airPoint = { lat: 34.049548, lon: -119.556973 };
