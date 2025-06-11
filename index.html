@@ -74,24 +74,7 @@
         document.getElementById("swell-2").innerHTML = `Swell 2<br><strong>${data.swell2?.height ?? '--'} ft @ ${data.swell2?.period ?? '--'} sec</strong>`;
         document.getElementById("timestamp").innerText = "Last updated: " + new Date(data.updated).toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
-        const ctx = document.getElementById('tideChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: data.tide.map(d => d.time),
-            datasets: [{
-              label: 'Tide (ft)',
-              data: data.tide.map(d => d.height),
-              fill: true,
-              borderColor: '#0077b6',
-              backgroundColor: 'rgba(0,119,182,0.1)'
-            }]
-          },
-          options: {
-            scales: {
-              x: { ticks: { maxRotation: 45, minRotation: 45 } },
-              y: { beginAtZero: false }
-            }
+        <script type="text/javascript" src="https://tides.today/en/%F0%9F%8C%8D/united-states/california/prisoners-harbor-santa-cruz-island/widget.js" async></script><script src="https://tides.today/en/%F0%9F%8C%8D/united-states/california/prisoners-harbor-santa-cruz-island/widget-init.js?includeMap=true&amp;includeWeather=false&amp;includeStyles=false&amp;includeTitle=false&amp;numberDays=3&amp;weatherUnit=c" async></script><div id="tidewidget__6637"></div>
           }
         });
       } catch (e) {
